@@ -8,36 +8,30 @@ import { Button } from "@/components/ui/button"
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
     FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { CardWrapper } from "./card-wrapper"
 
 const formSchema = z.object({
-    username: z.string().min(2, {
-        message: "Username must be at least 2 characters.",
-    }),
+    username: z.string().min(3, {
+        message: "Username is required."
+    }).trim(),
     email: z.string().email({
         message: "Please enter a valid email address."
-    }),
-    password: z.string().min(8, {
-        message: "Password must be at least 8 characters.",
-    }),
+    }).trim(),
+    password: z.string().min(1, {
+        message: "Password is required."
+    }).trim()
 })
 
-type formType = z.infer<typeof formSchema>;
+type Schema = z.infer<typeof formSchema>;
 
-interface AuthFormProps {
-    isSignUp?: boolean;
-}
-
-export const AuthForm = ({
-    isSignUp = false
-}: AuthFormProps) => {
-    const form = useForm<formType>({
+export const RegisterForm = () => {
+    const form = useForm<Schema>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             username: "",
@@ -46,12 +40,17 @@ export const AuthForm = ({
         },
     });
 
-    const onSubmit = (data: formType) => {
+    const onSubmit = (data: Schema) => {
         console.log(data);
     }
 
     return (
-        <div>
+        <CardWrapper
+            title='Welcome back'
+            buttonLabel='Do you have an account?'
+            buttonHref='sign-in'
+            includeIcons
+        >
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                     <FormField
@@ -63,31 +62,23 @@ export const AuthForm = ({
                                 <FormControl>
                                     <Input placeholder='username' {...field} />
                                 </FormControl>
-                                <FormDescription>
-                                    This is your public display name.
-                                </FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )}
                     />
-                    {isSignUp && (
-                        <FormField
-                            control={form.control}
-                            name="email"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Email</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder='email' {...field} />
-                                    </FormControl>
-                                    <FormDescription>
-                                        This is your Email.
-                                    </FormDescription>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                    )}
+                    <FormField
+                        control={form.control}
+                        name="email"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Email</FormLabel>
+                                <FormControl>
+                                    <Input placeholder='email' {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
                     <FormField
                         control={form.control}
                         name="password"
@@ -95,18 +86,15 @@ export const AuthForm = ({
                             <FormItem>
                                 <FormLabel>Password</FormLabel>
                                 <FormControl>
-                                    <Input type="password" placeholder='password' {...field} />
+                                    <Input type="password" placeholder='******' {...field} />
                                 </FormControl>
-                                <FormDescription>
-                                    This is your password.
-                                </FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )}
                     />
-                    <Button type="submit">Submit</Button>
+                    <Button type="submit" className="w-full">Register</Button>
                 </form>
             </Form>
-        </div>
+        </CardWrapper>
     )
 }

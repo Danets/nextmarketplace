@@ -1,15 +1,7 @@
-import { AuthForm } from '@/components/auth/auth-form'
-import { CardWrapper } from '@/components/auth/card-wrapper'
+import { LoginForm } from '@/components/auth/login-form'
 
 export default function Page() {
     return (
-        <CardWrapper
-            title='Welcome back'
-            buttonLabel='Do not have an account?'
-            buttonHref='sign-in'
-            includeIcons
-        >
-            <AuthForm />
-        </CardWrapper>
+        <LoginForm />
     )
 }

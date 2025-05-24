@@ -6,6 +6,7 @@ import {
 } from "@/components/ui/card"
 import { Header } from "./header";
 import { SocialIcons } from "./social-icons";
+import { ButtonLink } from "./button-link";
 
 interface CardWrapperProps {
     title: string;
@@ -23,7 +24,7 @@ export const CardWrapper = ({
     includeIcons = false
 }: CardWrapperProps) => {
     return (
-        <Card className="w-[500px] shadow-md">
+        <Card className="w-[400px] shadow-md">
             <CardHeader>
                 <Header title={title} />
             </CardHeader>
@@ -35,6 +36,12 @@ export const CardWrapper = ({
                     <SocialIcons />
                 </CardFooter>
             )}
+            <CardFooter>
+                <ButtonLink
+                    label={buttonLabel}
+                    href={buttonHref}
+                />
+            </CardFooter>
         </Card>
     )
 }
