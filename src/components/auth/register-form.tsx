@@ -15,24 +15,15 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { CardWrapper } from "./card-wrapper"
+import { RegisterFormSchema } from "@/lib/schemas"
+import { register } from "@/app/actions/register"
+import { useActionState } from "react"
 
-const formSchema = z.object({
-    username: z.string().min(3, {
-        message: "Username is required."
-    }).trim(),
-    email: z.string().email({
-        message: "Please enter a valid email address."
-    }).trim(),
-    password: z.string().min(1, {
-        message: "Password is required."
-    }).trim()
-})
-
-type Schema = z.infer<typeof formSchema>;
+type Schema = z.infer<typeof RegisterFormSchema>;
 
 export const RegisterForm = () => {
     const form = useForm<Schema>({
-        resolver: zodResolver(formSchema),
+        resolver: zodResolver(RegisterFormSchema),
         defaultValues: {
             username: "",
             email: "",
@@ -40,9 +31,7 @@ export const RegisterForm = () => {
         },
     });
 
-    const onSubmit = (data: Schema) => {
-        console.log(data);
-    }
+    const [state, action, pending] = useActionState(register, { error: null });
 
     return (
         <CardWrapper
@@ -52,7 +41,7 @@ export const RegisterForm = () => {
             includeIcons
         >
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                <form onSubmit={action} className="space-y-8">
                     <FormField
                         control={form.control}
                         name="username"

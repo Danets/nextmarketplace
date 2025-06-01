@@ -15,21 +15,13 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { CardWrapper } from "./card-wrapper"
+import { LoginFormSchema } from "@/lib/schemas"
 
-const formSchema = z.object({
-    email: z.string().email({
-        message: "Please enter a valid email address."
-    }).trim(),
-    password: z.string().min(1, {
-        message: "Password is required."
-    }).trim()
-})
-
-type Schema = z.infer<typeof formSchema>;
+type Schema = z.infer<typeof LoginFormSchema>;
 
 export const LoginForm = () => {
     const form = useForm<Schema>({
-        resolver: zodResolver(formSchema),
+        resolver: zodResolver(LoginFormSchema),
         defaultValues: {
             email: "",
             password: "",
@@ -49,22 +41,6 @@ export const LoginForm = () => {
         >
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                    {/* <FormField
-                        control={form.control}
-                        name="username"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Username</FormLabel>
-                                <FormControl>
-                                    <Input placeholder='username' {...field} />
-                                </FormControl>
-                                <FormDescription>
-                                    This is your public display name.
-                                </FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    /> */}
                     <FormField
                         control={form.control}
                         name="email"
