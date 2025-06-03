@@ -6,28 +6,26 @@ import bcrypt from "bcrypt";
 import { prisma } from "@/lib/db";
 
 export async function register(values: z.infer<typeof RegisterFormSchema>) {
-  // Validate form fields
   const validatedFields = RegisterFormSchema.safeParse(values);
 
-  // If any form fields are invalid, return early
   if (!validatedFields.success) {
     return {
-      errors: validatedFields.error.flatten().fieldErrors,
+      message: "Invalid form data",
     };
   }
 
   const { username, email, password } = validatedFields.data;
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const isEmailExists = await prisma.user.findUnique({
+  const existingEmail = await prisma.user.findUnique({
     where: { email },
   });
 
-  if (isEmailExists) {
-    return;
+  if (existingEmail) {
+    return { message: "Email already exists" };
   }
 
-  const user = await prisma.user.create({
+  await prisma.user.create({
     data: {
       username,
       email,
@@ -36,7 +34,6 @@ export async function register(values: z.infer<typeof RegisterFormSchema>) {
   });
 
   return {
-    success: "User registered successfully",
-    data: user,
+    message: "Account created successfully",
   };
 }

@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input"
 import { CardWrapper } from "./card-wrapper"
 import { RegisterFormSchema } from "@/lib/schemas"
 import { register } from "@/app/actions/register"
-import { useActionState } from "react"
+import { startTransition, useActionState } from "react"
 
 type Schema = z.infer<typeof RegisterFormSchema>;
 
@@ -31,7 +31,29 @@ export const RegisterForm = () => {
         },
     });
 
-    const [state, action, pending] = useActionState(register, { error: null });
+    const [state, action, pending] = useActionState(
+        async (_state: { message: string } | undefined, formData: FormData) => {
+            const values = {
+                username: formData.get("username") as string,
+                email: formData.get("email") as string,
+                password: formData.get("password") as string,
+            };
+            return await register(values);
+        },
+        undefined
+    );
+
+    const onSubmit = (data: Schema) => {
+        const formData = new FormData();
+        formData.append("username", data.username);
+        formData.append("email", data.email);
+        formData.append("password", data.password);
+
+        startTransition(() => {
+            action(formData);
+        })
+
+    }
 
     return (
         <CardWrapper
@@ -41,7 +63,7 @@ export const RegisterForm = () => {
             includeIcons
         >
             <Form {...form}>
-                <form onSubmit={action} className="space-y-8">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                     <FormField
                         control={form.control}
                         name="username"
@@ -81,7 +103,8 @@ export const RegisterForm = () => {
                             </FormItem>
                         )}
                     />
-                    <Button type="submit" className="w-full">Register</Button>
+                    <Button disabled={pending} type="submit" className="w-full">Register</Button>
+                    <div>{state?.message}</div>
                 </form>
             </Form>
         </CardWrapper>
