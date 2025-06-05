@@ -10,7 +10,7 @@ export async function register(values: z.infer<typeof RegisterFormSchema>) {
 
   if (!validatedFields.success) {
     return {
-      message: "Invalid form data",
+      error: "Invalid form data",
     };
   }
 
@@ -22,7 +22,7 @@ export async function register(values: z.infer<typeof RegisterFormSchema>) {
   });
 
   if (existingEmail) {
-    return { message: "Email already exists" };
+    return { error: "Email already exists" };
   }
 
   await prisma.user.create({
@@ -34,6 +34,6 @@ export async function register(values: z.infer<typeof RegisterFormSchema>) {
   });
 
   return {
-    message: "Account created successfully",
+    success: "Account created successfully",
   };
 }
