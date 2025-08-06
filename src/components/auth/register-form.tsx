@@ -28,7 +28,7 @@ type Schema = z.infer<typeof RegisterFormSchema>;
 export const RegisterForm = () => {
     const [error, SetError] = useState<string | undefined>('');
     const [success, SetSuccess] = useState<string | undefined>('');
-    const [pending, startTransition] = useTransition();
+    const [isPending, startTransition] = useTransition();
 
     const form = useForm<Schema>({
         resolver: zodResolver(RegisterFormSchema),
@@ -102,7 +102,7 @@ export const RegisterForm = () => {
                             </FormItem>
                         )}
                     />
-                    <Button disabled={pending} type="submit" className="w-full">Register</Button>
+                    <Button disabled={isPending} type="submit" className="w-full">Register</Button>
                     <ErrorToaster error={error} />
                     <SuccessToaster success={success} />
                 </form>
