@@ -102,7 +102,13 @@ export const RegisterForm = () => {
                             </FormItem>
                         )}
                     />
-                    <Button disabled={isPending} type="submit" className="w-full">Register</Button>
+                    <Button
+                        disabled={isPending}
+                        type="submit"
+                        className="w-full hover:cursor-pointer"
+                    >
+                        Register
+                    </Button>
                     <ErrorToaster error={error} />
                     <SuccessToaster success={success} />
                 </form>

@@ -1,4 +1,6 @@
 import { auth, signOut } from "../../../../auth";
+import { Button } from "@/components/ui/button";
+
 
 export default async function SettingsPage() {
   const session = await auth();
@@ -7,7 +9,7 @@ export default async function SettingsPage() {
       "use server";
       await signOut();
     }}>
-      <button type="submit">Sign Out</button>
+      <Button type="submit">Sign Out</Button>
     </form>
   </div>);
 }

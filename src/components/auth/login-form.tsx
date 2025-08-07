@@ -1,8 +1,13 @@
 "use client"
 
+import { useState, useTransition } from "react"
+
+
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
+import { LoginFormSchema } from "@/lib/schemas"
+import { login } from "@/app/actions/login"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -15,11 +20,16 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { CardWrapper } from "./card-wrapper"
-import { LoginFormSchema } from "@/lib/schemas"
+import { ErrorToaster } from "@/components/error-toaster"
+import { SuccessToaster } from "@/components/success-toaster"
 
 type Schema = z.infer<typeof LoginFormSchema>;
 
 export const LoginForm = () => {
+    const [error, SetError] = useState<string | undefined>('');
+    const [success, SetSuccess] = useState<string | undefined>('');
+    const [isPending, startTransition] = useTransition();
+
     const form = useForm<Schema>({
         resolver: zodResolver(LoginFormSchema),
         defaultValues: {
@@ -29,7 +39,18 @@ export const LoginForm = () => {
     });
 
     const onSubmit = (data: Schema) => {
-        console.log(data);
+        SetError("");
+        SetSuccess("");
+        startTransition(() => {
+            login(data)
+                .then((response) => {
+                    SetError(response.error);
+                    SetSuccess(response.success);
+                })
+                .catch((err) => {
+                    console.error(err);
+                });
+        })
     }
 
     return (
@@ -67,7 +88,15 @@ export const LoginForm = () => {
                             </FormItem>
                         )}
                     />
-                    <Button type="submit" className="w-full">Login</Button>
+                    <Button
+                        disabled={isPending}
+                        type="submit"
+                        className="w-full hover:cursor-pointer"
+                    >
+                        Login
+                    </Button>
+                    <ErrorToaster error={error} />
+                    <SuccessToaster success={success} />
                 </form>
             </Form>
         </CardWrapper>
