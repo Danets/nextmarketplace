@@ -7,7 +7,7 @@ export default async function SettingsPage() {
   return (<div>SettingsPage: {JSON.stringify(session)}
     <form action={async () => {
       "use server";
-      await signOut();
+      await signOut({ redirectTo: "/sign-in" });
     }}>
       <Button type="submit">Sign Out</Button>
     </form>
