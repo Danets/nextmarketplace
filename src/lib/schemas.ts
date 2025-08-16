@@ -1,7 +1,7 @@
 import z from "zod";
 
 export const RegisterFormSchema = z.object({
-  username: z
+  name: z
     .string()
     .min(3, {
       message: "Username is required.",

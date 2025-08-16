@@ -15,7 +15,7 @@ export async function register(values: z.infer<typeof RegisterFormSchema>) {
     };
   }
 
-  const { username, email, password } = validatedFields.data;
+  const { name, email, password } = validatedFields.data;
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const user = await getUserByEmail(email);
@@ -26,7 +26,7 @@ export async function register(values: z.infer<typeof RegisterFormSchema>) {
 
   await prisma.user.create({
     data: {
-      username,
+      name,
       email,
       password: hashedPassword,
     },

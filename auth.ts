@@ -5,8 +5,18 @@ import { prisma } from "@/lib/db";
 import { getUserById } from "@/lib/helpers";
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
+  events: {
+    async linkAccount({ user }) {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          emailVerified: new Date(),
+        },
+      });
+    },
+  },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token }) {
       if (!token.sub) return token;
 
       const existingUser = await getUserById(token.sub);
@@ -15,17 +25,16 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         token.role = existingUser.role;
       }
 
-      console.log({ token, user });
       return token;
     },
     async session({ session, token }) {
       if (session.user && token.sub) {
         session.user.id = token.sub;
       }
+
       if (session.user && token.role) {
         session.user.role = token.role;
       }
-      console.log({ session, sessionToken: token });
 
       return session;
     },
