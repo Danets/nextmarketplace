@@ -5,6 +5,10 @@ import { prisma } from "@/lib/db";
 import { getUserById } from "@/lib/helpers";
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
+  pages: {
+    signIn: "/sign-in",
+    error: "/error",
+  },
   events: {
     async linkAccount({ user }) {
       await prisma.user.update({

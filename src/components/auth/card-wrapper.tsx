@@ -12,7 +12,7 @@ interface CardWrapperProps {
     title: string;
     buttonLabel: string;
     buttonHref: string;
-    children: React.ReactNode;
+    children?: React.ReactNode;
     includeIcons?: boolean;
 }
 
