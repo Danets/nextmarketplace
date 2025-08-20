@@ -14,11 +14,11 @@ export const SocialIcons = () => {
     }
     return (
         <div className="flex items-center justify-between gap-x-2 w-full">
-            <Button className="shadow" variant="outline" size="lg" onClick={() => onLogin("google")}>
+            <Button className="shadow hover:cursor-pointer" variant="outline" size="lg" onClick={() => onLogin("google")}>
                 <FaGoogle className="h-4 w-4" />
                 Google
             </Button>
-            <Button className="shadow" variant="outline" size="lg" onClick={() => onLogin("github")}>
+            <Button className="shadow hover:cursor-pointer" variant="outline" size="lg" onClick={() => onLogin("github")}>
                 <FaGithub className="h-4 w-4" />
                 GitHub
             </Button>

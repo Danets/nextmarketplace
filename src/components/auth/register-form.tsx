@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useTransition } from "react"
+import { useRouter } from "next/navigation"
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -30,6 +31,8 @@ export const RegisterForm = () => {
     const [success, SetSuccess] = useState<string | undefined>('');
     const [isPending, startTransition] = useTransition();
 
+    const router = useRouter()
+
     const form = useForm<Schema>({
         resolver: zodResolver(RegisterFormSchema),
         defaultValues: {
@@ -47,6 +50,7 @@ export const RegisterForm = () => {
                 .then((response) => {
                     SetError(response.error);
                     SetSuccess(response.success);
+                    router.push('/settings')
                 })
                 .catch((err) => {
                     console.error(err);
