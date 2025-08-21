@@ -6,6 +6,7 @@ import { signIn } from "../../../auth";
 import { DEFAULT_REDIRECT } from "../../../routes";
 import { AuthError } from "next-auth";
 import { createVerificationToken, getUserByEmail } from "@/lib/helpers";
+import { mailer } from "@/lib/mail";
 
 export async function login(values: z.infer<typeof LoginFormSchema>) {
   const validatedFields = LoginFormSchema.safeParse(values);
@@ -26,6 +27,8 @@ export async function login(values: z.infer<typeof LoginFormSchema>) {
 
   if (!existingUser.emailVerified) {
     const token = await createVerificationToken(existingUser.email);
+
+    await mailer(token.email, token.token);
 
     return {
       success: "Confirmation email sent",
