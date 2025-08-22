@@ -8,7 +8,7 @@ interface LoginButtonProps {
     children: React.ReactNode;
 }
 
-const LoginButton = ({
+export const LoginButton = ({
     mode = "redirect",
     children,
 }: LoginButtonProps) => {
@@ -28,5 +28,3 @@ const LoginButton = ({
         </span>
     )
 }
-
-export default LoginButton
