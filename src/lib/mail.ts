@@ -9,6 +9,17 @@ export const mailer = async (email: string, token: string) => {
     from: "Acme <onboarding@resend.dev>",
     to: [email],
     subject: "Confirmation email",
-    html: `<>Click the link below to confirm your email address:<a href="${confirmLink}">Confirm Email</a></p>`,
+    html: `<p>Click the link below to confirm your email address:<a href="${confirmLink}">Confirm Email</a></p>`,
+  });
+};
+
+export const sendPasswordResetEmail = async (email: string, token: string) => {
+  const resetLink = `http://localhost:3000/reset-password?token=${token}`;
+
+  await resend.emails.send({
+    from: "Acme <onboarding@resend.dev>",
+    to: [email],
+    subject: "Reset your password",
+    html: `<p>Click the link below to reset your password:<a href="${resetLink}">reset password</a></p>`,
   });
 };

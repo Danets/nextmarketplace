@@ -35,3 +35,12 @@ export const LoginFormSchema = z.object({
     })
     .trim(),
 });
+
+export const ResetFormSchema = z.object({
+  email: z
+    .string()
+    .email({
+      message: "Please enter a valid email address.",
+    })
+    .trim(),
+});

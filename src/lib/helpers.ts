@@ -53,3 +53,44 @@ export const getVerificationTokenByToken = async (token: string) => {
     return null;
   }
 };
+
+export const createPasswordResetToken = async (email: string) => {
+  const token = uuidv4();
+  const expires = new Date(new Date().getTime() + 3600 * 1000); // 1 hour
+
+  const existingToken = await getPasswordResetTokenByEmail(email);
+
+  if (existingToken) {
+    await prisma.passwordResetToken.delete({
+      where: { id: existingToken.id },
+    });
+  }
+
+  return await prisma.passwordResetToken.create({
+    data: {
+      token,
+      email,
+      expires,
+    },
+  });
+};
+
+export const getPasswordResetTokenByEmail = async (email: string) => {
+  try {
+    return await prisma.passwordResetToken.findFirst({
+      where: { email },
+    });
+  } catch {
+    return null;
+  }
+};
+
+export const getPasswordResetTokenByToken = async (token: string) => {
+  try {
+    return await prisma.passwordResetToken.findUnique({
+      where: { token },
+    });
+  } catch {
+    return null;
+  }
+};
