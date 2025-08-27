@@ -2,13 +2,11 @@
 
 import { useState, useTransition } from "react"
 import { useSearchParams } from "next/navigation"
-import Link from "next/link"
 
-import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { LoginFormSchema } from "@/lib/schemas"
-import { login } from "@/app/actions/login"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { NewPasswordFormSchema } from "@/lib/schemas"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -23,23 +21,21 @@ import { Input } from "@/components/ui/input"
 import { CardWrapper } from "./card-wrapper"
 import { ErrorToaster } from "@/components/error-toaster"
 import { SuccessToaster } from "@/components/success-toaster"
+import { newPassword } from "@/app/actions/new-password"
 
-type Schema = z.infer<typeof LoginFormSchema>;
+type Schema = z.infer<typeof NewPasswordFormSchema>;
 
-export const LoginForm = () => {
+
+export const NewPasswordForm = () => {
     const [error, SetError] = useState<string | undefined>('');
     const [success, SetSuccess] = useState<string | undefined>('');
     const [isPending, startTransition] = useTransition();
 
-    const search = useSearchParams()
-    const urlError = search.get("error") === "OAuthAccountNotLinked"
-        ? "Email already in use. Please login with different provider."
-        : "";
+    const token = useSearchParams().get('token');
 
     const form = useForm<Schema>({
-        resolver: zodResolver(LoginFormSchema),
+        resolver: zodResolver(NewPasswordFormSchema),
         defaultValues: {
-            email: "",
             password: "",
         },
     });
@@ -47,8 +43,11 @@ export const LoginForm = () => {
     const onSubmit = (data: Schema) => {
         SetError("");
         SetSuccess("");
+
+        console.log("Reset form submitted with data:", data);
+
         startTransition(() => {
-            login(data)
+            newPassword(data, token)
                 .then((response) => {
                     SetError(response.error);
                     SetSuccess(response.success);
@@ -61,26 +60,12 @@ export const LoginForm = () => {
 
     return (
         <CardWrapper
-            title='Welcome back'
-            buttonLabel='Do not have an account?'
-            buttonHref='sign-up'
-            includeIcons
+            title='Enter New Password'
+            buttonLabel='Back to login'
+            buttonHref='sign-in'
         >
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                    <FormField
-                        control={form.control}
-                        name="email"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Email</FormLabel>
-                                <FormControl>
-                                    <Input placeholder='email' {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
                     <FormField
                         control={form.control}
                         name="password"
@@ -90,28 +75,19 @@ export const LoginForm = () => {
                                 <FormControl>
                                     <Input type="password" placeholder='****' {...field} />
                                 </FormControl>
-                                <Button
-                                    size="sm"
-                                    variant="link"
-                                    asChild
-                                    className="px-0 font-normal"
-                                >
-                                    <Link href="/reset" className="text-sm">
-                                        Forgot password?
-                                    </Link>
-                                </Button>
                                 <FormMessage />
                             </FormItem>
                         )}
                     />
+
                     <Button
                         disabled={isPending}
                         type="submit"
                         className="w-full hover:cursor-pointer"
                     >
-                        Login
+                        Confirm New Password
                     </Button>
-                    <ErrorToaster error={error || urlError} />
+                    <ErrorToaster error={error} />
                     <SuccessToaster success={success} />
                 </form>
             </Form>

@@ -5,7 +5,7 @@ import z from "zod";
 import bcrypt from "bcrypt";
 import { prisma } from "@/lib/db";
 import { createVerificationToken, getUserByEmail } from "@/lib/helpers";
-import { mailer } from "@/lib/mail";
+import { sendConfirmEmail } from "@/lib/mail";
 
 export async function register(values: z.infer<typeof RegisterFormSchema>) {
   const validatedFields = RegisterFormSchema.safeParse(values);
@@ -35,7 +35,7 @@ export async function register(values: z.infer<typeof RegisterFormSchema>) {
 
   const token = await createVerificationToken(email);
 
-  await mailer(token.email, token.token);
+  await sendConfirmEmail(token.email, token.token);
 
   return {
     success: "Confirmation email sent",

@@ -24,7 +24,6 @@ import { SuccessToaster } from "@/components/success-toaster"
 
 type Schema = z.infer<typeof ResetFormSchema>;
 
-
 export const ResetForm = () => {
     const [error, SetError] = useState<string | undefined>('');
     const [success, SetSuccess] = useState<string | undefined>('');

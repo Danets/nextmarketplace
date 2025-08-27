@@ -15,8 +15,8 @@ export const RegisterFormSchema = z.object({
     .trim(),
   password: z
     .string()
-    .min(1, {
-      message: "Password is required.",
+    .min(4, {
+      message: "Password must be at least 4 characters long.",
     })
     .trim(),
 });
@@ -30,8 +30,8 @@ export const LoginFormSchema = z.object({
     .trim(),
   password: z
     .string()
-    .min(1, {
-      message: "Password is required.",
+    .min(4, {
+      message: "Password must be at least 4 characters long.",
     })
     .trim(),
 });
@@ -41,6 +41,15 @@ export const ResetFormSchema = z.object({
     .string()
     .email({
       message: "Please enter a valid email address.",
+    })
+    .trim(),
+});
+
+export const NewPasswordFormSchema = z.object({
+  password: z
+    .string()
+    .min(4, {
+      message: "Password must be at least 4 characters long.",
     })
     .trim(),
 });
