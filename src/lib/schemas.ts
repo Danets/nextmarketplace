@@ -34,6 +34,7 @@ export const LoginFormSchema = z.object({
       message: "Password must be at least 4 characters long.",
     })
     .trim(),
+  code: z.optional(z.string().trim()),
 });
 
 export const ResetFormSchema = z.object({

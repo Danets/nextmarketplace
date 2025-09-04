@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { v4 as uuidv4 } from "uuid";
+import crypto from "crypto";
 
 export const getUserByEmail = async (email: string) => {
   return await prisma.user.findUnique({
@@ -93,4 +94,55 @@ export const getPasswordResetTokenByToken = async (token: string) => {
   } catch {
     return null;
   }
+};
+
+export const getTwoFactorConfirmationByUserId = async (userId: string) => {
+  try {
+    return await prisma.twoFactorConfirmation.findUnique({
+      where: { userId },
+    });
+  } catch {
+    return null;
+  }
+};
+
+export const getTwoFactorTokenByEmail = async (email: string) => {
+  try {
+    return await prisma.twoFactorToken.findFirst({
+      where: { email },
+    });
+  } catch {
+    return null;
+  }
+};
+
+export const getTwoFactorTokenByToken = async (token: string) => {
+  try {
+    return await prisma.twoFactorToken.findUnique({
+      where: { token },
+    });
+  } catch {
+    return null;
+  }
+};
+
+export const generateTwoFactorToken = async (email: string) => {
+  const token = crypto.randomInt(100_000, 1_000_000).toString();
+  const expires = new Date(new Date().getTime() + 10 * 3600 * 1000); // 1 hour
+
+  const existingToken = await getTwoFactorTokenByEmail(email);
+
+  if (existingToken) {
+    await prisma.twoFactorToken.delete({
+      where: { id: existingToken.id },
+    });
+  }
+
+  return await prisma.twoFactorToken.create({
+    data: {
+      token,
+      email,
+      expires,
+    },
+  });
 };

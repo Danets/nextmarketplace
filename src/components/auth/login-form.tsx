@@ -27,6 +27,7 @@ import { SuccessToaster } from "@/components/success-toaster"
 type Schema = z.infer<typeof LoginFormSchema>;
 
 export const LoginForm = () => {
+    const [twoFactor, setTwoFactor] = useState(false);
     const [error, SetError] = useState<string | undefined>('');
     const [success, SetSuccess] = useState<string | undefined>('');
     const [isPending, startTransition] = useTransition();
@@ -41,6 +42,7 @@ export const LoginForm = () => {
         defaultValues: {
             email: "",
             password: "",
+            code: "",
         },
     });
 
@@ -50,8 +52,19 @@ export const LoginForm = () => {
         startTransition(() => {
             login(data)
                 .then((response) => {
-                    SetError(response.error);
-                    SetSuccess(response.success);
+                    if (response.error) {
+                        form.reset()
+                        SetError(response.error);
+
+                    }
+                    if (response.success) {
+                        form.reset()
+                        SetSuccess(response.success);
+
+                    }
+                    if (response.twoFactor) {
+                        setTwoFactor(true);
+                    }
                 })
                 .catch((err) => {
                     console.error(err);
@@ -67,49 +80,70 @@ export const LoginForm = () => {
             includeIcons
         >
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                    <FormField
-                        control={form.control}
-                        name="email"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Email</FormLabel>
-                                <FormControl>
-                                    <Input placeholder='email' {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                    <div className="space-y-4">
+                        {twoFactor && (
+                            <FormField
+                                control={form.control}
+                                name="code"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Two Factor Code</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder='123456' {...field} disabled={isPending} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                         )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="password"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Password</FormLabel>
-                                <FormControl>
-                                    <Input type="password" placeholder='****' {...field} />
-                                </FormControl>
-                                <Button
-                                    size="sm"
-                                    variant="link"
-                                    asChild
-                                    className="px-0 font-normal"
-                                >
-                                    <Link href="/reset" className="text-sm">
-                                        Forgot password?
-                                    </Link>
-                                </Button>
-                                <FormMessage />
-                            </FormItem>
+                        {!twoFactor && (
+                            <>
+                                <FormField
+                                    control={form.control}
+                                    name="email"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Email</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder='email' {...field} disabled={isPending} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="password"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Password</FormLabel>
+                                            <FormControl>
+                                                <Input type="password" placeholder='****' {...field} disabled={isPending} />
+                                            </FormControl>
+                                            <Button
+                                                size="sm"
+                                                variant="link"
+                                                asChild
+                                                className="px-0 font-normal"
+                                            >
+                                                <Link href="/reset" className="text-sm">
+                                                    Forgot password?
+                                                </Link>
+                                            </Button>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </>
                         )}
-                    />
+                    </div>
                     <Button
                         disabled={isPending}
                         type="submit"
                         className="w-full hover:cursor-pointer"
                     >
-                        Login
+                        {twoFactor ? "Confirm" : "Login"}
                     </Button>
                     <ErrorToaster error={error || urlError} />
                     <SuccessToaster success={success} />
