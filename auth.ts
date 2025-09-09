@@ -42,12 +42,12 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 
       return true;
     },
-    async jwt({ token }) {
+    async jwt({ token, trigger }) {
       if (!token.sub) return token;
 
       const existingUser = await getUserById(token.sub);
 
-      if (existingUser) {
+      if (existingUser && trigger === "update") {
         token.role = existingUser.role;
       }
 
