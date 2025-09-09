@@ -1,18 +1,30 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { useSession } from "next-auth/react";
 import { signOut } from "next-auth/react";
-import { useCurrentUser } from "../../../../hooks/use-current-user";
 
+import { Button } from "@/components/ui/button";
+import { useEffect } from "react";
 
 export default function SettingsPage() {
+  const { data, status, update } = useSession();
 
-  const user = useCurrentUser();
+  useEffect(() => {
+    update(); // Update session to get latest user data
+  }, [])
 
-  const onClick = () => {
-    signOut();
+  if (status === "loading") {
+    return <div>Loading...</div>;
   }
-  return <div>SettingsPage: {JSON.stringify(user)}
-    <Button onClick={onClick} type="submit">Sign Out</Button>
-  </div>;
+
+  if (!data?.user) {
+    return <div>Not authorized</div>;
+  }
+
+  return (
+    <div>
+      <h3>SettingsPage: {JSON.stringify(data.user)}</h3>
+      <Button onClick={() => signOut()} type="submit">Sign Out</Button>
+    </div>
+  );
 }

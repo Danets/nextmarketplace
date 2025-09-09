@@ -1,15 +1,16 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+
+import { Button } from "@/components/ui/button";
 
 export const Navbar = () => {
     const path = usePathname();
 
     return (
         <nav>
-            <ul className="flex justify-between items-center w-full py-4">
+            <div className="flex justify-between items-center w-full py-4">
                 <Button
                     asChild
                     variant={path === "/" ? "default" : "ghost"}
@@ -23,7 +24,7 @@ export const Navbar = () => {
                 >
                     <Link href="/settings">Settings</Link>
                 </Button>
-            </ul>
+            </div>
         </nav>
     )
 }
