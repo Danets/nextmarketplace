@@ -17,14 +17,14 @@ export default function SettingsPage() {
     return <div>Loading...</div>;
   }
 
-  if (!data?.user) {
-    return <div>Not authorized</div>;
-  }
+  // if (!data?.user) {
+  //   return <div>Not authorized</div>;
+  // }
 
   return (
     <div>
-      <h3>SettingsPage: {JSON.stringify(data.user)}</h3>
-      <Button onClick={() => signOut()} type="submit">Sign Out</Button>
+      <h3>SettingsPage</h3>
+      {/* <Button onClick={() => signOut()} type="submit">Sign Out</Button> */}
     </div>
   );
 }
