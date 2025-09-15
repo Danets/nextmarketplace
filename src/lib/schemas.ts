@@ -54,3 +54,7 @@ export const NewPasswordFormSchema = z.object({
     })
     .trim(),
 });
+
+export const SettingsFormSchema = z.object({
+  name: z.optional(z.string()),
+});

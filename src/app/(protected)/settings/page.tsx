@@ -1,30 +1,54 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { signOut } from "next-auth/react";
+import { useEffect, useTransition } from "react";
+import { settings } from "@/app/actions/settings";
 
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { Button } from "@/components/ui/button";
-import { useEffect } from "react";
 
 export default function SettingsPage() {
-  const { data, status, update } = useSession();
+  const { data, update } = useSession();
 
   useEffect(() => {
     update(); // Update session to get latest user data
   }, [])
 
-  if (status === "loading") {
-    return <div>Loading...</div>;
+  const [isPending, startTransition] = useTransition();
+
+  const onClick = () => {
+    startTransition(() => {
+      settings({ name: "Bob Marly" }).then(() => update());
+    });
   }
 
-  // if (!data?.user) {
-  //   return <div>Not authorized</div>;
-  // }
+  if (!data?.user) {
+    return <div>Not authorized</div>;
+  }
 
   return (
-    <div>
-      <h3>SettingsPage</h3>
-      {/* <Button onClick={() => signOut()} type="submit">Sign Out</Button> */}
-    </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>Settings</CardTitle>
+        <CardDescription>
+          Settings session:
+          <h3>Name: {data.user.name}</h3>
+          <h3>Email: {data.user.email}</h3>
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Button disabled={isPending} onClick={onClick}>Upate Name</Button>
+      </CardContent>
+      <CardFooter>
+        <p>Card Footer</p>
+      </CardFooter>
+    </Card>
   );
 }
