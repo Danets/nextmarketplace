@@ -57,4 +57,5 @@ export const NewPasswordFormSchema = z.object({
 
 export const SettingsFormSchema = z.object({
   name: z.optional(z.string()),
+  email: z.optional(z.string()),
 });

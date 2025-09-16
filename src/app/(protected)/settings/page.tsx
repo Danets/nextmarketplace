@@ -1,8 +1,13 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useEffect, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { settings } from "@/app/actions/settings";
+
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+import { SettingsFormSchema } from "@/lib/schemas"
 
 import {
   Card,
@@ -13,6 +18,19 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { ErrorToaster } from "@/components/error-toaster"
+import { SuccessToaster } from "@/components/success-toaster"
+
+type Schema = z.infer<typeof SettingsFormSchema>;
 
 export default function SettingsPage() {
   const { data, update } = useSession();
@@ -21,12 +39,36 @@ export default function SettingsPage() {
     update(); // Update session to get latest user data
   }, [])
 
+  const [error, SetError] = useState<string | undefined>('');
+  const [success, SetSuccess] = useState<string | undefined>('');
   const [isPending, startTransition] = useTransition();
 
-  const onClick = () => {
+  const form = useForm<Schema>({
+    resolver: zodResolver(SettingsFormSchema),
+    defaultValues: {
+      name: data?.user?.name || undefined,
+      email: data?.user?.email || undefined,
+    },
+  });
+
+  const onSubmit = (data: Schema) => {
+    SetError("");
+    SetSuccess("");
     startTransition(() => {
-      settings({ name: "Bob Marly" }).then(() => update());
-    });
+      settings(data)
+        .then((response) => {
+          if (response.error) {
+            SetError(response.error);
+          }
+          if (response.success) {
+            SetSuccess(response.success);
+            update()
+          }
+        })
+        .catch(() => {
+          SetError("Something went wrong. Please try again.");
+        });
+    })
   }
 
   if (!data?.user) {
@@ -44,7 +86,53 @@ export default function SettingsPage() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Button disabled={isPending} onClick={onClick}>Upate Name</Button>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+
+            <div className="space-y-4">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Username</FormLabel>
+                    <FormControl>
+                      <Input placeholder='username' {...field} disabled={isPending} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="space-y-4">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input placeholder='email' {...field} disabled={isPending} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <Button
+              disabled={isPending}
+              type="submit"
+              className="w-full hover:cursor-pointer"
+            >
+              Update Info
+            </Button>
+
+            <ErrorToaster error={error} />
+            <SuccessToaster success={success} />
+          </form>
+        </Form>
       </CardContent>
       <CardFooter>
         <p>Card Footer</p>

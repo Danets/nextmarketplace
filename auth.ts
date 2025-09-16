@@ -2,7 +2,33 @@ import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import authConfig from "./auth.config";
 import { prisma } from "@/lib/db";
-import { getTwoFactorConfirmationByUserId, getUserById } from "@/lib/helpers";
+
+// declare module "@auth/core/jwt" {
+//   interface JWT {
+//     isOAuth?: boolean;
+//     role?: string;
+//     name?: string;
+//     email?: string;
+//   }
+// }
+
+// declare module "next-auth" {
+//   interface Session {
+//     user: {
+//       isOAuth?: boolean;
+//       id?: string;
+//       role?: string;
+//       name?: string | null;
+//       email?: string | null;
+//     };
+//   }
+// }
+
+import {
+  getAccountByUserId,
+  getTwoFactorConfirmationByUserId,
+  getUserById,
+} from "@/lib/helpers";
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
   pages: {
@@ -47,11 +73,14 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 
       const existingUser = await getUserById(token.sub);
 
-      if (existingUser) {
-        token.name = existingUser.name;
-        token.email = existingUser.email;
-        token.role = existingUser.role;
-      }
+      if (!existingUser) return token;
+
+      const existingAccount = await getAccountByUserId(existingUser.id);
+
+      token.name = existingUser.name;
+      token.email = existingUser.email;
+      token.role = existingUser.role;
+      token.isOAuth = !!existingAccount;
 
       return token;
     },
@@ -67,6 +96,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       if (session.user) {
         session.user.name = token.name;
         session.user.email = token.email ?? "";
+        session.user.isOAuth = token.isOAuth;
       }
 
       return session;

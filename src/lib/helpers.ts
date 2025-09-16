@@ -146,3 +146,13 @@ export const generateTwoFactorToken = async (email: string) => {
     },
   });
 };
+
+export const getAccountByUserId = async (userId: string) => {
+  try {
+    return await prisma.account.findFirst({
+      where: { userId },
+    });
+  } catch {
+    return null;
+  }
+};
