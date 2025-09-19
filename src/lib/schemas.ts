@@ -1,3 +1,4 @@
+import { Role } from "@prisma/client";
 import z from "zod";
 
 export const RegisterFormSchema = z.object({
@@ -55,7 +56,35 @@ export const NewPasswordFormSchema = z.object({
     .trim(),
 });
 
-export const SettingsFormSchema = z.object({
-  name: z.optional(z.string()),
-  email: z.optional(z.string()),
-});
+export const SettingsFormSchema = z
+  .object({
+    name: z.optional(z.string()),
+    email: z.optional(z.string().email()),
+    password: z.optional(z.string().min(4)),
+    newPassword: z.optional(z.string().min(4)),
+    role: z.enum([Role.USER, Role.ADMIN]).optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.password && !data.newPassword) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: "New password is required when changing password.",
+      path: ["newPassword"],
+    }
+  )
+  .refine(
+    (data) => {
+      if (data.newPassword && !data.password) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: "Password is required when changing password.",
+      path: ["password"],
+    }
+  );

@@ -29,15 +29,19 @@ import {
 import { Input } from "@/components/ui/input"
 import { ErrorToaster } from "@/components/error-toaster"
 import { SuccessToaster } from "@/components/success-toaster"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { Role } from "@prisma/client";
 
 type Schema = z.infer<typeof SettingsFormSchema>;
 
 export default function SettingsPage() {
   const { data, update } = useSession();
-
-  useEffect(() => {
-    update(); // Update session to get latest user data
-  }, [])
 
   const [error, SetError] = useState<string | undefined>('');
   const [success, SetSuccess] = useState<string | undefined>('');
@@ -48,8 +52,27 @@ export default function SettingsPage() {
     defaultValues: {
       name: data?.user?.name || undefined,
       email: data?.user?.email || undefined,
+      password: undefined,
+      newPassword: undefined,
+      role: data?.user?.role || undefined,
     },
   });
+
+  useEffect(() => {
+    update(); // Update session to get latest user data
+  }, [])
+
+  useEffect(() => {
+    if (data?.user) {
+      form.reset({
+        name: data.user.name || undefined,
+        email: data.user.email || undefined,
+        password: undefined,
+        newPassword: undefined,
+        role: data?.user?.role || undefined,
+      });
+    }
+  }, [data, form]);
 
   const onSubmit = (data: Schema) => {
     SetError("");
@@ -72,7 +95,7 @@ export default function SettingsPage() {
   }
 
   if (!data?.user) {
-    return <div>Not authorized</div>;
+    return <div>Loading...</div>;
   }
 
   return (
@@ -83,6 +106,7 @@ export default function SettingsPage() {
           Settings session:
           <h3>Name: {data.user.name}</h3>
           <h3>Email: {data.user.email}</h3>
+          <h3>Role: {data.user.role}</h3>
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -105,17 +129,81 @@ export default function SettingsPage() {
               />
             </div>
 
+            {!data.user.isOAuth && (
+              <>
+                <div className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                          <Input type="email" placeholder='email' {...field} disabled={isPending} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Password</FormLabel>
+                        <FormControl>
+                          <Input type="password" placeholder='****' {...field} disabled={isPending} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="newPassword"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>New Password</FormLabel>
+                        <FormControl>
+                          <Input type="password" placeholder='****' {...field} disabled={isPending} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </>
+            )}
+
             <div className="space-y-4">
               <FormField
                 control={form.control}
-                name="email"
+                name="role"
                 render={({ field }) => (
+
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input placeholder='email' {...field} disabled={isPending} />
-                    </FormControl>
-                    <FormMessage />
+                    <FormLabel>Role</FormLabel>
+
+                    <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isPending}>
+                      <FormControl>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select a role" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <FormMessage />
+
+                      <SelectContent>
+                        <SelectItem value={Role.ADMIN}>Admin</SelectItem>
+                        <SelectItem value={Role.USER}>User</SelectItem>
+                      </SelectContent>
+                    </Select>
+
                   </FormItem>
                 )}
               />
