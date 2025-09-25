@@ -20,7 +20,6 @@ export const Modal = ({ title, description, isOpen, onClose, children }: ModalPr
     const handleClick = (open: boolean) => {
         if (!open) {
             onClose();
-            console.log("Modal closed")
         }
     }
 

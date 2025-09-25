@@ -14,7 +14,7 @@ export default function Home() {
     if (!isOpen) {
       onOpen();
     }
-  }, [isOpen, onOpen]);
+  }, [onOpen]);
 
   return (
     <main className="flex flex-col items-center justify-center min-h-screen p-4 bg-amber-500">

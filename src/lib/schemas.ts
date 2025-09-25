@@ -56,6 +56,10 @@ export const NewPasswordFormSchema = z.object({
     .trim(),
 });
 
+export const CategoryFormSchema = z.object({
+  name: z.string().trim(),
+});
+
 export const SettingsFormSchema = z
   .object({
     name: z.optional(z.string()),
