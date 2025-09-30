@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
+import axios from "axios"
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -42,69 +43,58 @@ export const StoreModal = () => {
         },
     });
 
-    const onSubmit = (data: Schema) => {
-        SetError("");
-        SetSuccess("");
-        startTransition(() => {
-            // register(data)
-            //     .then((response) => {
-            //         SetError(response.error);
-            //         SetSuccess(response.success);
-            //         if (response.success) {
-            //             router.push('/settings')
-            //         }
-            //     })
-            //     .catch((err) => {
-            //         console.error(err);
-            //     });
-        })
-    }
+    const onSubmit = async (data: Schema) => {
+        try {
+            const response = await axios.post('/api/stores', data);
+        } catch (error) {
+            console.error(error);
+        }
 
-    return (
-        <Modal isOpen={modal.isOpen} title="Modal" description="Holla new modal" onClose={modal.onClose} >
-            <div>Modal Content</div>
-            <div>
-                <div className="space-y-4 py-2 pb-4">
-                    <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                            <FormField
-                                control={form.control}
-                                name="name"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Name</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder='Category name' {...field} disabled={isPending} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+        return (
+            <Modal isOpen={modal.isOpen} title="Modal" description="Holla new modal" onClose={modal.onClose} >
+                <div>Modal Content</div>
+                <div>
+                    <div className="space-y-4 py-2 pb-4">
+                        <Form {...form}>
+                            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                                <FormField
+                                    control={form.control}
+                                    name="name"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Name</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder='Category name' {...field} disabled={isPending} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
 
-                            <div className="space-x-2 pt-6 flex items-center justify-end w-full ">
-                                <Button
-                                    variant="outline"
-                                    className="hover:cursor-pointer"
-                                    onClick={modal.onClose}
-                                >
-                                    Cancel
-                                </Button>
-                                <Button
-                                    disabled={isPending}
-                                    type="submit"
-                                    className="hover:cursor-pointer"
-                                >
-                                    Create
-                                </Button>
-                                <ErrorToaster error={error} />
-                                <SuccessToaster success={success} />
-                            </div>
+                                <div className="space-x-2 pt-6 flex items-center justify-end w-full ">
+                                    <Button
+                                        variant="outline"
+                                        className="hover:cursor-pointer"
+                                        onClick={modal.onClose}
+                                    >
+                                        Cancel
+                                    </Button>
+                                    <Button
+                                        disabled={isPending}
+                                        type="submit"
+                                        className="hover:cursor-pointer"
+                                    >
+                                        Create
+                                    </Button>
+                                    <ErrorToaster error={error} />
+                                    <SuccessToaster success={success} />
+                                </div>
 
-                        </form>
-                    </Form>
+                            </form>
+                        </Form>
+                    </div>
                 </div>
-            </div>
 
-        </Modal>
-    )
-}
+            </Modal>
+        )
+    }
