@@ -5,6 +5,7 @@ import "./globals.css";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "../../auth";
 import { ModalProvider } from "../../providers/modal-provider";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,8 +35,9 @@ export default async function RootLayout({
           {/* <header className="flex justify-end items-center p-4 gap-4 h-16">
 
           </header> */}
-          {children}
+          <Toaster />
           <ModalProvider />
+          {children}
         </body>
       </html>
     </SessionProvider>

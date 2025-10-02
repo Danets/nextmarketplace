@@ -18,6 +18,16 @@ export async function POST(request: Request) {
       return new NextResponse("Name is required", { status: 400 });
     }
 
+    const existingUser = await prisma.user.findUnique({
+      where: {
+        id: session.user.id,
+      },
+    });
+
+    if (!existingUser) {
+      return new NextResponse("User not found", { status: 404 });
+    }
+
     const store = await prisma.store.create({
       data: {
         name,
@@ -25,7 +35,7 @@ export async function POST(request: Request) {
       },
     });
 
-    return NextResponse.json(store);
+    return NextResponse.json(store, { status: 201 });
   } catch (error) {
     console.error("[STORES_POST]", error);
 

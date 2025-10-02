@@ -24,6 +24,7 @@ import { SuccessToaster } from "@/components/success-toaster"
 
 import { useModalStore } from "../../../hooks/use-modal"
 import { Modal } from "../modal";
+import { toast } from "sonner"
 
 type Schema = z.infer<typeof CategoryFormSchema>;
 
@@ -43,58 +44,88 @@ export const StoreModal = () => {
         },
     });
 
-    const onSubmit = async (data: Schema) => {
-        try {
-            const response = await axios.post('/api/stores', data);
-        } catch (error) {
-            console.error(error);
-        }
-
-        return (
-            <Modal isOpen={modal.isOpen} title="Modal" description="Holla new modal" onClose={modal.onClose} >
-                <div>Modal Content</div>
-                <div>
-                    <div className="space-y-4 py-2 pb-4">
-                        <Form {...form}>
-                            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                                <FormField
-                                    control={form.control}
-                                    name="name"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Name</FormLabel>
-                                            <FormControl>
-                                                <Input placeholder='Category name' {...field} disabled={isPending} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-
-                                <div className="space-x-2 pt-6 flex items-center justify-end w-full ">
-                                    <Button
-                                        variant="outline"
-                                        className="hover:cursor-pointer"
-                                        onClick={modal.onClose}
-                                    >
-                                        Cancel
-                                    </Button>
-                                    <Button
-                                        disabled={isPending}
-                                        type="submit"
-                                        className="hover:cursor-pointer"
-                                    >
-                                        Create
-                                    </Button>
-                                    <ErrorToaster error={error} />
-                                    <SuccessToaster success={success} />
-                                </div>
-
-                            </form>
-                        </Form>
-                    </div>
-                </div>
-
-            </Modal>
-        )
+    const onSubmit = (data: Schema) => {
+        SetError("");
+        SetSuccess("");
+        startTransition(() => {
+            axios.post('/api/stores', data)
+                .then((response) => {
+                    // SetSuccess(response.statusText);
+                    // toast(response.statusText, {
+                    //     description: response.data.createdAt,
+                    //     action: {
+                    //         label: "Close",
+                    //         onClick: () => modal.onClose(),
+                    //     },
+                    // })
+                    // modal.onClose();
+                    // form.reset();
+                    // router.push('/' + response.data.id);
+                    window.location.assign('/' + response.data.id);
+                })
+                .catch((err) => {
+                    console.error(err);
+                    toast(err.response.data, {
+                        description: err.message,
+                        action: {
+                            label: "Close",
+                            onClick: () => modal.onClose(),
+                        },
+                    })
+                    SetError(err.response.data);
+                });
+        })
     }
+
+    return (
+        <Modal
+            isOpen={modal.isOpen}
+            title="Create Store"
+            description="Add a new store to manage products and categories"
+            onClose={modal.onClose}
+        >
+            <div>
+                <div className="space-y-4 py-2 pb-4">
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                            <FormField
+                                control={form.control}
+                                name="name"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Name</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder='E-commerce' {...field} disabled={isPending} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <div className="space-x-2 pt-6 flex items-center justify-end w-full ">
+                                <Button
+                                    variant="outline"
+                                    className="hover:cursor-pointer"
+                                    onClick={modal.onClose}
+                                >
+                                    Cancel
+                                </Button>
+                                <Button
+                                    disabled={isPending}
+                                    type="submit"
+                                    className="hover:cursor-pointer"
+                                >
+                                    Create
+                                </Button>
+
+                            </div>
+                            <ErrorToaster error={error} />
+                            <SuccessToaster success={success} />
+                        </form>
+                    </Form>
+                </div>
+            </div>
+
+        </Modal>
+    )
+}
