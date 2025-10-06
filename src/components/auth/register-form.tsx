@@ -50,9 +50,6 @@ export const RegisterForm = () => {
                 .then((response) => {
                     SetError(response.error);
                     SetSuccess(response.success);
-                    // if (response.success) {
-                    //     router.push('/settings')
-                    // }
                 })
                 .catch((err) => {
                     console.error(err);

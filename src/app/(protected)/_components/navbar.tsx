@@ -1,30 +1,45 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { AvatarButton } from "@/components/auth/avatar-button";
 
 export const Navbar = () => {
     const path = usePathname();
+    const { storeId } = useParams();
+
+    const links = [
+        {
+            href: `/${storeId}`,
+            label: "Store Settings",
+            active: path === `/${storeId}` ? "default" : "ghost"
+        },
+        {
+            href: "/",
+            label: "Setup",
+            active: path === "/" ? "default" : "ghost"
+        },
+        {
+            href: "/settings",
+            label: "Settings",
+            active: path === "/settings" ? "default" : "ghost"
+        },
+    ]
 
     return (
-        <nav className="flex items-center justify-between bg-white rounded-md space-y-2 px-2">
+        <nav className="flex items-center justify-between bg-blue-500 rounded-md space-y-2 px-4">
             <div className="flex items-center py-4 gap-x-2">
-                <Button
-                    asChild
-                    variant={path === "/" ? "default" : "ghost"}
-                >
-                    <Link href="/">Home</Link>
-                </Button>
-                <Button
-                    asChild
-                    variant={path === "/settings" ? "default" : "ghost"}
-
-                >
-                    <Link href="/settings">Settings</Link>
-                </Button>
+                {links.map((link) => (
+                    <Button
+                        key={link.href}
+                        asChild
+                        variant={link.active}
+                    >
+                        <Link href={link.href}>{link.label}</Link>
+                    </Button>
+                ))}
             </div>
             <AvatarButton />
         </nav>

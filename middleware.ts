@@ -7,6 +7,7 @@ import {
   DEFAULT_REDIRECT,
   apiAuthPrefix,
 } from "./routes";
+import { prisma } from "@/lib/db";
 
 // Use only one of the two middleware options below
 // 1. Use middleware directly
@@ -15,9 +16,22 @@ import {
 // 2. Wrapped middleware option
 const { auth } = NextAuth(authConfig);
 
-export default auth((req) => {
+export default auth(async (req) => {
   const path = req.nextUrl.pathname;
   const isLoggedIn = !!req.auth;
+
+  // Extra validation to ensure user still exists in DB
+  if (isLoggedIn && req.auth?.user?.id) {
+    const existingUser = await prisma.user.findUnique({
+      where: {
+        id: req.auth.user.id,
+      },
+    });
+
+    if (!existingUser) {
+      return Response.redirect(new URL("/sign-in", req.nextUrl));
+    }
+  }
 
   const isApiAuthRoute = path.startsWith(apiAuthPrefix);
   const isPublicRoute = publicRoutes.includes(path);

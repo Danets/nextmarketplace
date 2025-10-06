@@ -11,7 +11,6 @@ export default function ProtectedLayout({
             <div className="w-11/12 mx-auto flex-col justify-center items-center gap-2">
                 <header>
                     <Navbar />
-                    <h1>ProtectedLayout</h1>
                 </header>
                 <main>
                     {children}

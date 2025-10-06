@@ -34,10 +34,17 @@ export default async function DashboardLayout({
     }
 
     return (
-        <>
-            <Navbar />
-            <h2>{store.name}</h2>
-            {children}
-        </>
+        <div className="min-h-screen w-full bg-sky-500">
+            <div className="w-11/12 mx-auto flex-col justify-center items-center gap-2">
+                <header>
+                    <Navbar />
+                </header>
+                <main>
+                    <h3>Store Name: {store.name}</h3>
+                    {children}
+                </main>
+                <footer></footer>
+            </div>
+        </div >
     );
 }

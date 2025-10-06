@@ -40,8 +40,6 @@ export const ResetForm = () => {
         SetError("");
         SetSuccess("");
 
-        console.log("Reset form submitted with data:", data);
-
         startTransition(() => {
             reset(data)
                 .then((response) => {

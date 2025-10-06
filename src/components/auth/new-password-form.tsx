@@ -44,8 +44,6 @@ export const NewPasswordForm = () => {
         SetError("");
         SetSuccess("");
 
-        console.log("Reset form submitted with data:", data);
-
         startTransition(() => {
             newPassword(data, token)
                 .then((response) => {
