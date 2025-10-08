@@ -5,16 +5,23 @@ import { useParams, usePathname } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { AvatarButton } from "@/components/auth/avatar-button";
+import { StoreSwitcher } from "@/components/store-switcher";
+import { Store } from "@prisma/client";
 
-export const Navbar = () => {
+interface NavbarProps {
+    stores?: Store[];
+}
+
+export const Navbar = ({ stores }: NavbarProps) => {
+
     const path = usePathname();
     const { storeId } = useParams();
 
     const links = [
         {
-            href: `/${storeId}`,
+            href: `/${storeId}/settings`,
             label: "Store Settings",
-            active: path === `/${storeId}` ? "default" : "ghost"
+            active: path === `/${storeId}/settings` ? "default" : "ghost"
         },
         {
             href: "/",
@@ -31,6 +38,7 @@ export const Navbar = () => {
     return (
         <nav className="flex items-center justify-between bg-blue-500 rounded-md space-y-2 px-4">
             <div className="flex items-center py-4 gap-x-2">
+                <StoreSwitcher stores={stores} />
                 {links.map((link) => (
                     <Button
                         key={link.href}

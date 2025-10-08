@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "../../../../auth";
 import { prisma } from "@/lib/db";
-import { Navbar } from "@/app/(protected)/_components/navbar";
+import { Navbar } from "@/components/navbar";
 
 export default async function DashboardLayout({
     children,
