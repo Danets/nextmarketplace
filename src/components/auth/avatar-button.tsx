@@ -16,9 +16,12 @@ export const AvatarButton = () => {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger>
-                <Avatar>
-                    <AvatarImage src={user?.image || ""} className="w-16 h-16 cursor-pointer rounded-md" />
-                    <AvatarFallback asChild>
+                <Avatar className="w-16 h-16">
+                    <AvatarImage
+                        src={user?.image || ""}
+                        className="w-full h-full object-cover rounded-md cursor-pointer"
+                    />
+                    <AvatarFallback asChild delayMs={600}>
                         <div className="bg-sky-500 cursor-pointer flex items-center justify-center rounded-md p-6">
                             <FaUser className="text-black" />
                         </div>

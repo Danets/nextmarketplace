@@ -33,11 +33,17 @@ export default async function DashboardLayout({
         redirect("/");
     }
 
+    const stores = await prisma.store.findMany({
+        where: {
+            userId: session.user.id,
+        },
+    });
+
     return (
         <div className="min-h-screen w-full bg-sky-500">
             <div className="w-11/12 mx-auto flex-col justify-center items-center gap-2">
                 <header>
-                    <Navbar />
+                    <Navbar stores={stores} />
                 </header>
                 <main>
                     <h3>Store Name: {store.name}</h3>

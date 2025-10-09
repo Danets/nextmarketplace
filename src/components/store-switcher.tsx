@@ -64,9 +64,7 @@ export const StoreSwitcher = ({
                     className={cn("w-[200px] justify-between", className)}
                 >
                     <StoreIcon className="opacity-50" />
-                    {currentStore
-                        ? currentStore.label
-                        : "Select store..."}
+                    {currentStore?.label}
                     <ChevronsUpDown className="opacity-50" />
                 </Button>
             </PopoverTrigger>
