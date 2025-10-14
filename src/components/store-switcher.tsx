@@ -50,7 +50,7 @@ export const StoreSwitcher = ({
 
     const onStoreSelect = (store: { label: string, value: string }) => {
         setOpen(false);
-        router.push(`/${store.value}`);
+        router.push(`/${store.value}/settings`);
     }
     return (
         <Popover open={open} onOpenChange={setOpen}>

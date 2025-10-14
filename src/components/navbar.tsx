@@ -19,18 +19,13 @@ export const Navbar = ({ stores }: NavbarProps) => {
 
     const links = [
         {
-            href: `/${storeId}`,
+            href: storeId ? `/${storeId}/settings` : "/",
             label: "Store Settings",
-            active: path === `/${storeId}` ? "default" : "ghost"
-        },
-        {
-            href: "/",
-            label: "Setup",
-            active: path === "/" ? "default" : "ghost"
+            active: path === `/${storeId}/settings` ? "default" : "ghost"
         },
         {
             href: "/settings",
-            label: "Settings",
+            label: "User Settings",
             active: path === "/settings" ? "default" : "ghost"
         },
     ]
@@ -38,7 +33,7 @@ export const Navbar = ({ stores }: NavbarProps) => {
     return (
         <nav className="flex items-center justify-between bg-blue-500 rounded-md space-y-2 px-4">
             <div className="flex items-center py-4 gap-x-2">
-                {path === `/${storeId}` && <StoreSwitcher stores={stores} />}
+                {path === `/${storeId}/settings` && <StoreSwitcher stores={stores!} />}
                 {links.map((link) => (
                     <Button
                         key={link.href}
