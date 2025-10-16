@@ -1,7 +1,6 @@
 "use client"
 
-import { useState, useTransition } from "react"
-import { useRouter } from "next/navigation"
+import { useTransition } from "react"
 import axios from "axios"
 
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -19,8 +18,6 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { ErrorToaster } from "@/components/error-toaster"
-import { SuccessToaster } from "@/components/success-toaster"
 
 import { useModalStore } from "../../../hooks/use-modal"
 import { Modal } from "../modal";
@@ -31,11 +28,7 @@ type Schema = z.infer<typeof CategoryFormSchema>;
 export const StoreModal = () => {
     const modal = useModalStore();
 
-    const [error, SetError] = useState<string | undefined>('');
-    const [success, SetSuccess] = useState<string | undefined>('');
     const [isPending, startTransition] = useTransition();
-
-    const router = useRouter()
 
     const form = useForm<Schema>({
         resolver: zodResolver(CategoryFormSchema),
@@ -45,23 +38,16 @@ export const StoreModal = () => {
     });
 
     const onSubmit = (data: Schema) => {
-        SetError("");
-        SetSuccess("");
         startTransition(() => {
             axios.post('/api/stores', data)
                 .then((response) => {
-                    // SetSuccess(response.statusText);
-                    // toast(response.statusText, {
-                    //     description: response.data.createdAt,
-                    //     action: {
-                    //         label: "Close",
-                    //         onClick: () => modal.onClose(),
-                    //     },
-                    // })
-                    // modal.onClose();
-                    // form.reset();
-                    // router.push('/' + response.data.id);
-                    window.location.assign('/' + response.data.id);
+                    window.location.assign(`/${response.data.id}/settings`);
+                    toast("Store has been created", {
+                        action: {
+                            label: "Close",
+                            onClick: () => { },
+                        },
+                    })
                 })
                 .catch((err) => {
                     console.error(err);
@@ -69,10 +55,9 @@ export const StoreModal = () => {
                         description: err.message,
                         action: {
                             label: "Close",
-                            onClick: () => modal.onClose(),
+                            onClick: () => { },
                         },
                     })
-                    SetError(err.response.data);
                 });
         })
     }
@@ -119,8 +104,6 @@ export const StoreModal = () => {
                                 </Button>
 
                             </div>
-                            <ErrorToaster error={error} />
-                            <SuccessToaster success={success} />
                         </form>
                     </Form>
                 </div>

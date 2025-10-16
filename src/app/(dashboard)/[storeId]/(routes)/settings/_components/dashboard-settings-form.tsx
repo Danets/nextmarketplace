@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react"
+import { useParams, useRouter } from "next/navigation";
 
 import { Store } from "@prisma/client";
 
@@ -16,8 +17,9 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator";
-import { ErrorToaster } from "@/components/error-toaster"
-import { SuccessToaster } from "@/components/success-toaster"
+import { AlertModal } from "@/components/alert-modal";
+import { Spinner } from "@/components/ui/spinner";
+import { toast } from "sonner"
 
 import { Trash } from "lucide-react";
 
@@ -26,9 +28,6 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { DashboardSettingsFormSchema } from "@/lib/schemas"
 import axios from "axios";
-import { toast } from "sonner"
-import { useModalStore } from "../../../../../../../hooks/use-modal";
-import { useParams, useRouter } from "next/navigation";
 
 interface DashboardSettingsFormProps {
     initialData: Store
@@ -37,12 +36,8 @@ interface DashboardSettingsFormProps {
 type Schema = z.infer<typeof DashboardSettingsFormSchema>;
 
 export const DashboardSettingsForm = ({ initialData }: DashboardSettingsFormProps) => {
-    const [error, SetError] = useState<string | undefined>('');
-    const [success, SetSuccess] = useState<string | undefined>('');
-    const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
-
-    const modal = useModalStore();
+    const [isPending, startTransition] = useTransition();
 
     const router = useRouter()
     const { storeId } = useParams();
@@ -52,17 +47,18 @@ export const DashboardSettingsForm = ({ initialData }: DashboardSettingsFormProp
         defaultValues: initialData
     });
 
-    const onSubmit = async (data: Schema) => {
+    const onHandleDelete = async () => {
         try {
             setLoading(true);
-            const response = await axios.patch(`/api/stores/${storeId}`, data)
-            router.refresh();
-            SetSuccess(response.statusText);
-            toast(response.statusText, {
-                description: response.data.updatedAt,
+            await axios.delete(`/api/stores/${storeId}`)
+            startTransition(() => {
+                router.refresh();
+                router.push("/");
+            });
+            toast("Store has been deleted", {
                 action: {
                     label: "Close",
-                    onClick: () => modal.onClose(),
+                    onClick: () => { },
                 },
             })
         } catch (err) {
@@ -72,10 +68,39 @@ export const DashboardSettingsForm = ({ initialData }: DashboardSettingsFormProp
                     description: err.message,
                     action: {
                         label: "Close",
-                        onClick: () => modal.onClose(),
+                        onClick: () => { },
                     },
                 })
-                SetError(err.response?.data);
+            }
+        }
+        finally {
+            setLoading(false);
+        }
+    }
+
+    const onSubmit = async (data: Schema) => {
+        try {
+            setLoading(true);
+            await axios.patch(`/api/stores/${storeId}`, data)
+            startTransition(() => {
+                router.refresh();
+            });
+            toast("Store has been updated", {
+                action: {
+                    label: "Close",
+                    onClick: () => { },
+                },
+            })
+        } catch (err) {
+            console.error(err);
+            if (axios.isAxiosError(err)) {
+                toast(err.response?.data || 'An error occurred', {
+                    description: err.message,
+                    action: {
+                        label: "Close",
+                        onClick: () => { },
+                    },
+                })
             }
         }
         finally {
@@ -87,16 +112,25 @@ export const DashboardSettingsForm = ({ initialData }: DashboardSettingsFormProp
         <>
             <div className="flex items-center justify-between">
                 <Heading title="Settings" description="Manage store preferences" />
-                <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => { }}
+                <AlertModal
+                    item="Store"
+                    action="delete"
+                    handler={onHandleDelete}
                 >
-                    <Trash className="h-4 w-4" />
-                    Delete Store
-                </Button>
-            </div>
+                    <Button
+                        variant="destructive"
+                        size="sm"
+                        disabled={loading || isPending}
+                        onClick={() => { }}
+                        className="hover:cursor-pointer"
+                    >
+                        <Trash className="h-4 w-4" />
+                        Delete Store
+                    </Button>
+                </AlertModal >
+            </div >
             <Separator className="my-4" />
+            {(loading || isPending) && <Spinner />}
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6">
                     <div className="grid grid-cols-3 gap-8">
@@ -107,7 +141,7 @@ export const DashboardSettingsForm = ({ initialData }: DashboardSettingsFormProp
                                 <FormItem>
                                     <FormLabel>Name</FormLabel>
                                     <FormControl>
-                                        <Input placeholder='Store name' {...field} disabled={loading} />
+                                        <Input placeholder='Store name' {...field} disabled={loading || isPending} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -115,14 +149,12 @@ export const DashboardSettingsForm = ({ initialData }: DashboardSettingsFormProp
                         />
                     </div>
                     <Button
-                        disabled={loading}
+                        disabled={loading || isPending}
                         type="submit"
                         className="hover:cursor-pointer"
                     >
                         Save Changes
                     </Button>
-                    <ErrorToaster error={error} />
-                    <SuccessToaster success={success} />
                 </form>
             </Form>
         </>
