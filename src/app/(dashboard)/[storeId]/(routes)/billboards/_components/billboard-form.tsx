@@ -28,6 +28,7 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { BillboardFormSchema } from "@/lib/schemas"
 import axios from "axios";
+import { ImageUpload } from "@/components/image-upload";
 
 interface BillboardFormProps {
     initialData: Billboard | null
@@ -40,7 +41,7 @@ export const BillboardForm = ({ initialData }: BillboardFormProps) => {
     const [isPending, startTransition] = useTransition();
 
     const router = useRouter()
-    const { storeId } = useParams();
+    const { storeId, billboardId } = useParams();
 
     const title = initialData ? "Edit Billboard" : "Create Billboard";
     const description = initialData ? "Edit your billboard details" : "Add a new billboard";
@@ -58,12 +59,12 @@ export const BillboardForm = ({ initialData }: BillboardFormProps) => {
     const onHandleDelete = async () => {
         try {
             setLoading(true);
-            await axios.delete(`/api/stores/${storeId}`)
+            await axios.delete(`/api/${storeId}/billboards${billboardId}`)
             startTransition(() => {
                 router.refresh();
                 router.push("/");
             });
-            toast("Store has been deleted", {
+            toast("Billboard has been deleted", {
                 action: {
                     label: "Close",
                     onClick: () => { },
@@ -89,11 +90,16 @@ export const BillboardForm = ({ initialData }: BillboardFormProps) => {
     const onSubmit = async (data: Schema) => {
         try {
             setLoading(true);
-            await axios.patch(`/api/stores/${storeId}`, data)
+            if (initialData) {
+                await axios.patch(`/api/${storeId}/billboards/${billboardId}`, data)
+            } else {
+                await axios.post(`/api/${storeId}/billboards`, data)
+            }
+
             startTransition(() => {
                 router.refresh();
             });
-            toast("Store has been updated", {
+            toast(toastMessage, {
                 action: {
                     label: "Close",
                     onClick: () => { },
@@ -168,7 +174,12 @@ export const BillboardForm = ({ initialData }: BillboardFormProps) => {
                                 <FormItem>
                                     <FormLabel>Image Url</FormLabel>
                                     <FormControl>
-                                        <Input placeholder='image Url' {...field} disabled={loading || isPending} />
+                                        <ImageUpload
+                                            onChange={(url) => field.onChange(url)}
+                                            onRemove={() => field.onChange("")}
+                                            disabled={loading || isPending}
+                                            value={field.value ? [field.value] : []}
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
