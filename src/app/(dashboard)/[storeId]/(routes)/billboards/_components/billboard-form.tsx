@@ -59,10 +59,10 @@ export const BillboardForm = ({ initialData }: BillboardFormProps) => {
     const onHandleDelete = async () => {
         try {
             setLoading(true);
-            await axios.delete(`/api/${storeId}/billboards${billboardId}`)
+            await axios.delete(`/api/${storeId}/billboards/${billboardId}`)
             startTransition(() => {
                 router.refresh();
-                router.push("/");
+                router.push(`/${storeId}/billboards`);
             });
             toast("Billboard has been deleted", {
                 action: {
@@ -98,6 +98,7 @@ export const BillboardForm = ({ initialData }: BillboardFormProps) => {
 
             startTransition(() => {
                 router.refresh();
+                router.push(`/${storeId}/billboards`);
             });
             toast(toastMessage, {
                 action: {
