@@ -30,7 +30,7 @@ export const BillboardClient = ({ billboards }: BillboardClientProps) => {
             </div>
             <Separator />
             <div className="container mx-auto py-10">
-                <DataTable columns={columns} data={billboards} storeId={storeId} searchKey="label" />
+                <DataTable columns={columns} data={billboards} searchKey="label" />
             </div>
         </>
     )

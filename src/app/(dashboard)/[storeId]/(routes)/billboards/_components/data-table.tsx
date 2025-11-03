@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
 
 import {
     ColumnDef,
@@ -28,20 +27,16 @@ import { Input } from "@/components/ui/input"
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
-    storeId: string
     searchKey: string
 }
 
 export function DataTable<TData, TValue>({
     columns,
     data,
-    storeId,
     searchKey
 }: DataTableProps<TData, TValue>) {
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [sorting, setSorting] = useState<SortingState>([])
-
-    const router = useRouter()
 
     const table = useReactTable({
         data,
@@ -97,10 +92,6 @@ export function DataTable<TData, TValue>({
                                 <TableRow
                                     key={row.id}
                                     data-state={row.getIsSelected() && "selected"}
-                                    onClick={() => {
-                                        router.push(`/${storeId}/billboards/${row.original?.id}`)
-                                        console.log(row);
-                                    }}
                                 >
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>
