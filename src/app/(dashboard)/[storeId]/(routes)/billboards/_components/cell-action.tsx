@@ -20,7 +20,8 @@ import {
 import { BillboardColumn } from "./columns"
 import axios from "axios"
 import { toast } from "sonner"
-import { AlertModal } from "@/components/alert-modal"
+import { useModalCellAction } from "../../../../../../../hooks/use-modal"
+import { Modal } from "@/components/modal"
 
 interface CellActionProps {
     data: BillboardColumn
@@ -29,6 +30,7 @@ interface CellActionProps {
 export const CellAction = ({ data }: CellActionProps) => {
     const [loading, setLoading] = useState(false);
     const [isPending, startTransition] = useTransition();
+    const modal = useModalCellAction();
 
     const router = useRouter()
     const { storeId } = useParams();
@@ -60,55 +62,78 @@ export const CellAction = ({ data }: CellActionProps) => {
         }
         finally {
             setLoading(false);
+            modal.onClose();
         }
     }
 
     return (
-        <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0">
-                    <span className="sr-only">Open menu</span>
-                    <MoreHorizontal className="h-4 w-4" />
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                <DropdownMenuItem
-                    onClick={() => {
-                        navigator.clipboard.writeText(data.id)
-                            .then(() => {
-                                toast.success("Billboard ID copied to clipboard");
-                            })
-                            .catch(() => {
-                                toast.error("Failed to copy Billboard ID");
-                            });
-                    }}
-                >
-                    <Copy className="mr-2 h-4 w-4" />
-                    Copy Billboard Id
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                    onClick={() => {
-                        router.push(`/${storeId}/billboards/${data.id}`)
-                    }}
-                >
-                    <Edit className="mr-2 h-4 w-4" />
-                    Update Billboard
-                </DropdownMenuItem>
-                <AlertModal
-                    item="Billboard"
-                    action="delete"
-                    handler={onHandleDelete}
-                >
+        <>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="h-8 w-8 p-0">
+                        <span className="sr-only">Open menu</span>
+                        <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
                     <DropdownMenuItem
-                        onClick={(e) => e.stopPropagation()}
+                        onClick={() => {
+                            navigator.clipboard.writeText(data.id)
+                                .then(() => {
+                                    toast.success("Billboard ID copied to clipboard");
+                                })
+                                .catch(() => {
+                                    toast.error("Failed to copy Billboard ID");
+                                });
+                        }}
+                    >
+                        <Copy className="mr-2 h-4 w-4" />
+                        Copy Billboard Id
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                        onClick={() => {
+                            router.push(`/${storeId}/billboards/${data.id}`)
+                        }}
+                    >
+                        <Edit className="mr-2 h-4 w-4" />
+                        Update Billboard
+                    </DropdownMenuItem>
+
+                    <DropdownMenuItem
+                        onClick={() => modal.onOpen()}
                     >
                         <Trash className="mr-2 h-4 w-4" />
                         Delete Billboard
                     </DropdownMenuItem>
-                </AlertModal>
-            </DropdownMenuContent>
-        </DropdownMenu>
+                </DropdownMenuContent>
+            </DropdownMenu>
+
+            <Modal
+                title="Are you sure?"
+                description="This action cannot be undone."
+                isOpen={modal.isOpen}
+                onClose={modal.onClose}
+            >
+                <div className="pt-6 space-x-2 flex items-center justify-end w-full">
+                    <Button
+                        disabled={loading || isPending}
+                        variant="outline"
+                        onClick={modal.onClose}
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        disabled={loading || isPending}
+                        variant="destructive"
+                        onClick={onHandleDelete}
+                    >
+                        {loading ? "Deleting..." : "Delete"}
+                    </Button>
+                </div>
+            </Modal>
+        </>
+
     )
 }

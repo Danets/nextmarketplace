@@ -121,7 +121,6 @@ export const DashboardSettingsForm = ({ initialData }: DashboardSettingsFormProp
                         variant="destructive"
                         size="sm"
                         disabled={loading || isPending}
-                        onClick={() => { }}
                         className="hover:cursor-pointer"
                     >
                         <Trash className="h-4 w-4" />

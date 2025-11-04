@@ -11,3 +11,9 @@ export const useModalStore = create<ModalStore>((set) => ({
   onClose: () => set({ isOpen: false }),
   onOpen: () => set({ isOpen: true }),
 }));
+
+export const useModalCellAction = create<ModalStore>((set) => ({
+  isOpen: false,
+  onClose: () => set({ isOpen: false }),
+  onOpen: () => set({ isOpen: true }),
+}));

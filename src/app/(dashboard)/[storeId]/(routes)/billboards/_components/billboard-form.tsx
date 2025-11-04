@@ -127,6 +127,14 @@ export const BillboardForm = ({ initialData }: BillboardFormProps) => {
         <>
             <div className="flex items-center justify-between">
                 <Heading title={title} description={description} />
+                <Button
+                    variant="link"
+                    size="sm"
+                    className="hover:cursor-pointer"
+                    onClick={() => router.push(`/${storeId}/billboards`)}
+                >
+                    Return to Billboards Page
+                </Button>
 
                 {initialData && (
                     <AlertModal
@@ -138,7 +146,6 @@ export const BillboardForm = ({ initialData }: BillboardFormProps) => {
                             variant="destructive"
                             size="sm"
                             disabled={loading || isPending}
-                            onClick={() => { }}
                             className="hover:cursor-pointer"
                         >
                             <Trash className="h-4 w-4" />
