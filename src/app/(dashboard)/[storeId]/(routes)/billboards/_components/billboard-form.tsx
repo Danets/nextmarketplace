@@ -127,14 +127,6 @@ export const BillboardForm = ({ initialData }: BillboardFormProps) => {
         <>
             <div className="flex items-center justify-between">
                 <Heading title={title} description={description} />
-                <Button
-                    variant="link"
-                    size="sm"
-                    className="hover:cursor-pointer"
-                    onClick={() => router.push(`/${storeId}/billboards`)}
-                >
-                    Return to Billboards Page
-                </Button>
 
                 {initialData && (
                     <AlertModal
@@ -146,7 +138,7 @@ export const BillboardForm = ({ initialData }: BillboardFormProps) => {
                             variant="destructive"
                             size="sm"
                             disabled={loading || isPending}
-                            className="hover:cursor-pointer"
+                            className="cursor-pointer"
                         >
                             <Trash className="h-4 w-4" />
                             Delete Billboard
@@ -155,6 +147,14 @@ export const BillboardForm = ({ initialData }: BillboardFormProps) => {
                 )}
 
             </div >
+            <Button
+                variant="outline"
+                size="sm"
+                className="cursor-pointer"
+                onClick={() => router.push(`/${storeId}/billboards`)}
+            >
+                Return to Billboards Page
+            </Button>
             <Separator className="my-4" />
             {(loading || isPending) && <Spinner />}
             <Form {...form}>

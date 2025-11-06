@@ -23,7 +23,9 @@ export const BillboardClient = ({ billboards }: BillboardClientProps) => {
                     title={`Billboards (${billboards.length})`}
                     description="Manage billboards for your store"
                 />
-                <Button onClick={() => router.push(`/${storeId}/billboards/new`)}>
+                <Button
+                    className="cursor-pointer"
+                    onClick={() => router.push(`/${storeId}/billboards/new`)}>
                     <Plus className="mr-2 w-4 h-4" />
                     Add new
                 </Button>

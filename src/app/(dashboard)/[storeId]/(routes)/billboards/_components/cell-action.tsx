@@ -120,6 +120,7 @@ export const CellAction = ({ data }: CellActionProps) => {
                     <Button
                         disabled={loading || isPending}
                         variant="outline"
+                        className="cursor-pointer"
                         onClick={modal.onClose}
                     >
                         Cancel
@@ -127,6 +128,7 @@ export const CellAction = ({ data }: CellActionProps) => {
                     <Button
                         disabled={loading || isPending}
                         variant="destructive"
+                        className="cursor-pointer"
                         onClick={onHandleDelete}
                     >
                         {loading ? "Deleting..." : "Delete"}

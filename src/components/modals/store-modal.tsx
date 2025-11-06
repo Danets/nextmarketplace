@@ -90,7 +90,7 @@ export const StoreModal = () => {
                             <div className="space-x-2 pt-6 flex items-center justify-end w-full ">
                                 <Button
                                     variant="outline"
-                                    className="hover:cursor-pointer"
+                                    className="cursor-pointer"
                                     onClick={modal.onClose}
                                 >
                                     Cancel
@@ -98,7 +98,7 @@ export const StoreModal = () => {
                                 <Button
                                     disabled={isPending}
                                     type="submit"
-                                    className="hover:cursor-pointer"
+                                    className="cursor-pointer"
                                 >
                                     Create
                                 </Button>
