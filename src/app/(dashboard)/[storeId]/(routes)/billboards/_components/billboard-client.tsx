@@ -7,6 +7,7 @@ import { Separator } from "@/components/ui/separator"
 import { Plus } from "lucide-react"
 import { BillboardColumn, columns } from "./columns";
 import { DataTable } from "./data-table";
+import { ApiList } from "@/components/api-list";
 
 interface BillboardClientProps {
     billboards: BillboardColumn[];
@@ -34,6 +35,12 @@ export const BillboardClient = ({ billboards }: BillboardClientProps) => {
             <div className="container mx-auto py-10">
                 <DataTable columns={columns} data={billboards} searchKey="label" />
             </div>
+            <Heading
+                title="API"
+                description="API calls for billboards"
+            />
+            <Separator />
+            <ApiList entityName="billboards" entityIdName="billboardId" />
         </>
     )
 }
