@@ -58,6 +58,7 @@ export const NewPasswordFormSchema = z.object({
 
 export const CategoryFormSchema = z.object({
   name: z.string().trim(),
+  billboardId: z.string().trim(),
 });
 
 export const SettingsFormSchema = z
