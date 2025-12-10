@@ -38,11 +38,11 @@ export const CellAction = ({ data }: CellActionProps) => {
     const onHandleDelete = async () => {
         try {
             setLoading(true);
-            await axios.delete(`/api/${storeId}/billboards/${data.id}`)
+            await axios.delete(`/api/${storeId}/categories/${data.id}`)
             startTransition(() => {
                 router.refresh();
             });
-            toast("Billboard has been deleted", {
+            toast("Category has been deleted", {
                 action: {
                     label: "Close",
                     onClick: () => { },
@@ -81,31 +81,31 @@ export const CellAction = ({ data }: CellActionProps) => {
                         onClick={() => {
                             navigator.clipboard.writeText(data.id)
                                 .then(() => {
-                                    toast.success("Billboard ID copied to clipboard");
+                                    toast.success("Category ID copied to clipboard");
                                 })
                                 .catch(() => {
-                                    toast.error("Failed to copy Billboard ID");
+                                    toast.error("Failed to copy Category ID");
                                 });
                         }}
                     >
                         <Copy className="mr-2 h-4 w-4" />
-                        Copy Billboard Id
+                        Copy Category Id
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
                         onClick={() => {
-                            router.push(`/${storeId}/billboards/${data.id}`)
+                            router.push(`/${storeId}/categories/${data.id}`)
                         }}
                     >
                         <Edit className="mr-2 h-4 w-4" />
-                        Update Billboard
+                        Update Category
                     </DropdownMenuItem>
 
                     <DropdownMenuItem
                         onClick={() => modal.onOpen()}
                     >
                         <Trash className="mr-2 h-4 w-4" />
-                        Delete Billboard
+                        Delete Category
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>

@@ -20,8 +20,13 @@ import { Separator } from "@/components/ui/separator";
 import { AlertModal } from "@/components/alert-modal";
 import { Spinner } from "@/components/ui/spinner";
 import { toast } from "sonner"
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@radix-ui/react-select";
-
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 import { Trash } from "lucide-react";
 
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -183,13 +188,13 @@ export const CategoryForm = ({ initialData, billboards }: CategoryFormProps) => 
                                     <FormControl>
                                         <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isPending}>
                                             <FormControl>
-                                                <SelectTrigger className="w-full">
+                                                <SelectTrigger className="w-[180px]">
                                                     <SelectValue placeholder="Select a Billboard Id" />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <FormMessage />
 
-                                            <SelectContent>
+                                            <SelectContent className="bg-white">
                                                 {billboards?.map((billboard: Billboard) => (
                                                     <SelectItem key={billboard.id} value={billboard.id}>
                                                         {billboard.label}
