@@ -34,6 +34,11 @@ export const Navbar = ({ stores }: NavbarProps) => {
             active: path === `/${storeId}/categories` ? "default" : "ghost"
         },
         {
+            href: storeId ? `/${storeId}/sizes` : "/",
+            label: "Sizes",
+            active: path === `/${storeId}/sizes` ? "default" : "ghost"
+        },
+        {
             href: "/settings",
             label: "User Settings",
             active: path === "/settings" ? "default" : "ghost"
