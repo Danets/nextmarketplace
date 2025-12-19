@@ -38,7 +38,7 @@ export const CellAction = ({ data }: CellActionProps) => {
     const onHandleDelete = async () => {
         try {
             setLoading(true);
-            await axios.delete(`/api/${storeId}/categories/${data.id}`)
+            await axios.delete(`/api/${storeId}/categories/${modal.modalId}`)
             startTransition(() => {
                 router.refresh();
             });
@@ -102,7 +102,7 @@ export const CellAction = ({ data }: CellActionProps) => {
                     </DropdownMenuItem>
 
                     <DropdownMenuItem
-                        onClick={() => modal.onOpen()}
+                        onClick={() => modal.onOpen(data.id)}
                     >
                         <Trash className="mr-2 h-4 w-4" />
                         Delete Category

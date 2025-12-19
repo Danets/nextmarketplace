@@ -3,7 +3,8 @@ import { create } from "zustand";
 interface ModalStore {
   isOpen: boolean;
   onClose: () => void;
-  onOpen: () => void;
+  onOpen: (id?: string) => void;
+  modalId?: string;
 }
 
 export const useModalStore = create<ModalStore>((set) => ({
@@ -15,5 +16,5 @@ export const useModalStore = create<ModalStore>((set) => ({
 export const useModalCellAction = create<ModalStore>((set) => ({
   isOpen: false,
   onClose: () => set({ isOpen: false }),
-  onOpen: () => set({ isOpen: true }),
+  onOpen: (id?: string) => set({ isOpen: true, modalId: id }),
 }));

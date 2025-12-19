@@ -33,7 +33,7 @@ export const SizesClient = ({ sizes }: SizesClientProps) => {
             </div>
             <Separator />
             <div className="container mx-auto py-10">
-                <DataTable columns={columns} data={sizes} searchKey="label" />
+                <DataTable columns={columns} data={sizes} searchKey="name" />
             </div>
             <Heading
                 title="API"
