@@ -105,5 +105,12 @@ export const BillboardFormSchema = z.object({
 
 export const SizeFormSchema = z.object({
   name: z.string().min(1),
-  value: z.string().min(1),
+  value: z.string().min(4),
+});
+
+export const ColorFormSchema = z.object({
+  name: z.string().min(1),
+  value: z.string().min(4).regex(/^#/, {
+    message: "Color value must be a valid hex code starting with #",
+  }),
 });
