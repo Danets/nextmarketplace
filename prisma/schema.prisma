@@ -95,6 +95,7 @@ model Store {
   categories Category[]
   sizes      Size[]
   colors     Color[]
+  products   Product[]
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
@@ -122,18 +123,20 @@ model Category {
   name        String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  products    Product[]
 
   @@index([storeId])
   @@index([billboardId])
 }
 
 model Size {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   storeId   String
   name      String
   value     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  products  Product[]
 
   store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
 
@@ -141,14 +144,52 @@ model Size {
 }
 
 model Color {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   storeId   String
   name      String
   value     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  products  Product[]
 
   store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
 
   @@index([storeId])
+}
+
+model Product {
+  id         String   @id @default(cuid())
+  storeId    String
+  categoryId String
+  sizeId     String
+  colorId    String
+  name       String
+  price      Decimal
+  isFeatured Boolean  @default(false)
+  isArchived Boolean  @default(false)
+  images     Image[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  store    Store    @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  size     Size     @relation(fields: [sizeId], references: [id], onDelete: Cascade)
+  color    Color    @relation(fields: [colorId], references: [id], onDelete: Cascade)
+
+  @@index([storeId])
+  @@index([categoryId])
+  @@index([sizeId])
+  @@index([colorId])
+}
+
+model Image {
+  id        String   @id @default(cuid())
+  productId String
+  url       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
 }
