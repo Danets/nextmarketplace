@@ -24,11 +24,11 @@ export default async function ProductPage({ params }: { params: Promise<{ storeI
         id: product.id,
         name: product.name,
         price: priceFormatter.format(product.price.toNumber()),
-        isFeatured: product.isFeatured,
-        isArchived: product.isArchived,
         category: product.category.name,
         size: product.size.name,
         color: product.color.value,
+        isFeatured: product.isFeatured,
+        isArchived: product.isArchived,
         createdAt: format(product.createdAt, "MMMM do, yyyy")
     })
     );
