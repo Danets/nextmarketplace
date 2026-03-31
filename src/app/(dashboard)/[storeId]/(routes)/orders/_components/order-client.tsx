@@ -20,7 +20,7 @@ export const OrderClient = ({ orders }: OrderClientProps) => {
 
             <Separator />
             <div className="container mx-auto py-10">
-                <DataTable columns={columns} data={orders} searchKey="label" />
+                <DataTable columns={columns} data={orders} searchKey="phone" />
             </div>
         </>
     )
