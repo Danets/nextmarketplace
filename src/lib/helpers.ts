@@ -1,3 +1,5 @@
+"use server";
+
 import { prisma } from "@/lib/db";
 import { v4 as uuidv4 } from "uuid";
 import crypto from "crypto";

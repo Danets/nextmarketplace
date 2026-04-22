@@ -37,20 +37,20 @@ export default auth(async (req) => {
   const isPublicRoute = publicRoutes.includes(path);
   const isAuthRoute = authRoutes.includes(path);
 
-  if (isApiAuthRoute) return null;
+  if (isApiAuthRoute) return;
 
   if (isAuthRoute) {
     if (isLoggedIn) {
       return Response.redirect(new URL(DEFAULT_REDIRECT, req.nextUrl));
     }
-    return null;
+    return;
   }
 
   if (!isLoggedIn && !isPublicRoute) {
     return Response.redirect(new URL(authRoutes[0], req.nextUrl));
   }
 
-  return null;
+  return;
 });
 
 export const config = {
@@ -61,3 +61,5 @@ export const config = {
     "/(api|trpc)(.*)",
   ],
 };
+
+export const runtime = "nodejs";
